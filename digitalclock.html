@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Clock</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkOGZ_qIrRhz_ix8abPrbQkvV9oRdzg3GL9g&s://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-QDe2aMDUfQ1ZUcpEt4aAtqF7BJ805MSLwA&shttps://www.google.com/imgres?q=clock%20dark%20background%20images%20hd&imgurl=https%3A%2F%2Fimg.goodfon.com%2Foriginal%2F1920x1080%2Ff%2F2b%2Fclock-gears-hands-numbers-black-background-simple-background.jpg&imgrefurl=https%3A%2F%2Fwww.goodfon.com%2Fminimalism%2Fwallpaper-clock-gears-hands-numbers-black-background-simple-background.html&docid=MD6yeUQRwFAHBM&tbnid=4PWGuyUUG3pZIM&vet=12ahUKEwjhwYDU6M2OAxVY3jgGHYjYB9EQM3oECGcQAA..i&w=1920&h=1080&hcb=2&ved=2ahUKEwjhwYDU6M2OAxVY3jgGHYjYB9EQM3oECGcQAAhttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNHqgA9rhKZS1OIN6ZwyM2i_bO88317fm0A&shttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNHqgA9rhKZS1OIN6ZwyM2i_bO88317fm0A&shttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNHqgA9rhKZS1OIN6ZwyM2i_bO88317fm0A&shttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNHqgA9rhKZS1OIN6ZwyM2i_bO88317fm0A&shttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNHqgA9rhKZS1OIN6ZwyM2i_bO88317fm0A&shttps://www.google.com/imgres?q=clock%20dark%20background%20images%20hd&imgurl=https%3A%2F%2Fst3.depositphotos.com%2F12173334%2F15645%2Fi%2F450%2Fdepositphotos_156451600-stock-photo-alarm-clock-on-the-shelf.jpg&imgrefurl=https%3A%2F%2Fdepositphotos.com%2Fphotos%2Fmidnight-clock.html&docid=n99T5jTHOv7DAM&tbnid=xFzwD6gwAcecpM&vet=12ahUKEwjUgcSZ6c2OAxXKyTgGHaipA8w4ChAzegQIWxAA..i&w=600&h=400&hcb=2&ved=2ahUKEwjUgcSZ6c2OAxXKyTgGHaipA8w4ChAzegQIWxAA');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+    }
+
+    #clock {
+      font-size: 4rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px 40px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      background-color: #00ffff;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00cccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🕒 Digital Clock</h1>
+  <div id="clock"></div>
+
+  <div class="controls">
+    <button onclick="toggleFormat()">Toggle 12h/24h</button>
+
+    <label>Set Alarm Time: <input type="time" id="alarmTime" /></label>
+    <select id="alarmSound">
+      <option value="beep">Beep</option>
+      <option value="chime">Chime</option>
+    </select>
+
+    <label>Set Timer (seconds): <input type="number" id="timerSeconds" /></label>
+    <button onclick="startTimer()">Start Timer</button>
+
+    <label>Set Reminder Time: <input type="time" id="reminderTime" /></label>
+    <label>Reminder Message: <input type="text" id="reminderMsg" /></label>
+  </div>
+
+  <audio id="beepSound" src="C:\Users\abhis\Desktop\projects\wake_up.mp3"></audio>
+  <audio id="chimeSound" src="C:\Users\abhis\Desktop\projects\wake_up.mp3"></audio>
+
+  <script>
+    let is24Hour = true;
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+      let ampm = '';
+
+      if (!is24Hour) {
+        ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12 || 12;
+      }
+
+      hours = String(hours).padStart(2, '0');
+      minutes = String(minutes).padStart(2, '0');
+      seconds = String(seconds).padStart(2, '0');
+
+      document.getElementById("clock").innerText = `${hours}:${minutes}:${seconds}${ampm}`;
+
+      checkAlarm(now);
+      checkReminder(now);
+    }
+
+    function toggleFormat() {
+      is24Hour = !is24Hour;
+    }
+
+    function startTimer() {
+      const seconds = parseInt(document.getElementById("timerSeconds").value);
+      if (!isNaN(seconds) && seconds > 0) {
+        setTimeout(() => {
+          alert("⏳ Timer is up!");
+          playSound();
+        }, seconds * 1000);
+      }
+    }
+
+    function checkAlarm(now) {
+      const alarmTime = document.getElementById("alarmTime").value;
+      if (!alarmTime) return;
+
+      const [h, m] = alarmTime.split(":");
+      if (now.getHours() == h && now.getMinutes() == m && now.getSeconds() == 0) {
+        alert("🔔 Alarm Time!");
+        playSound();
+      }
+    }
+
+    function checkReminder(now) {
+      const reminderTime = document.getElementById("reminderTime").value;
+      const message = document.getElementById("reminderMsg").value;
+      if (!reminderTime || !message) return;
+
+      const [h, m] = reminderTime.split(":");
+      if (now.getHours() == h && now.getMinutes() == m && now.getSeconds() == 0) {
+        alert("⏰ Reminder: " + message);
+        playSound();
+      }
+    }
+
+    function playSound() {
+      const soundChoice = document.getElementById("alarmSound").value;
+      const sound = soundChoice === "chime" ? document.getElementById("chimeSound") : document.getElementById("beepSound");
+      sound.play();
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
